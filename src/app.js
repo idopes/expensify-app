@@ -1,58 +1,29 @@
-class IndecisionApp extends React.Component {
-  render() {
-    return (
-      <div>
-        <Header/>
-        <Action/>
-        <Options/>
-        <AddOption/>
-      </div>
-    )
-  }
-}
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import AppRouter from './routers/AppRouter';
+import configureStore from './store/configureStore';
+import { addExpense } from './actions/expenses';
+import { setTextFilter } from './actions/filters';
+import getVisibleExpenses from './selectors/expenses';
+import 'normalize.css/normalize.css';
+import './styles/styles.scss';
+import 'react-dates/lib/css/_datepicker.css';
 
-class Header extends React.Component {
-  render() {
-    return (
-      <div>
-        <h1>Indecision</h1>
-        <h2>Put your life in the hands of a computer</h2>
-      </div>
-    );
-  }
-}
+const store = configureStore();
 
-class Action extends React.Component {
-  render() {
-    return (<div>
-      <button>What should i do?</button>
-    </div>)
-  }
-}
+store.dispatch(addExpense({ description: 'Water bill', amount: 4500 }));
+store.dispatch(addExpense({ description: 'Gas bill', createdAt: 1000 }));
+store.dispatch(addExpense({ description: 'Rent', amount: 109500 }));
 
-class Options extends React.Component {
-  render() {
-    return (<div>
-      <h3>Options Component</h3>
-      <ol>
-        <Option/>
-        <Option/>
-        <Option/>
-      </ol>
-    </div>)
-  }
-}
+const state = store.getState();
+const visibleExpenses = getVisibleExpenses(state.expenses, state.filters);
+console.log(visibleExpenses);
 
-class Option extends React.Component {
-  render() {
-    return <li>this is a option</li>
-  }
-}
+const jsx = (
+  <Provider store={store}>
+    <AppRouter />
+  </Provider>
+);
 
-class AddOption extends React.Component {
-    render() {
-      return <p>this is the AddOption Component</p>
-    }
-}
-
-ReactDOM.render(<IndecisionApp/>, document.getElementById('app'));
+ReactDOM.render(jsx, document.getElementById('app'));
